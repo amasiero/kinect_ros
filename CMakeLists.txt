@@ -5,6 +5,8 @@ project(kinect_handler)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  geometry_msgs
+  p2os_driver
   roscpp
   rospy
   std_msgs
@@ -107,6 +109,9 @@ include_directories(
 # add_executable(kinect_handler_node src/kinect_handler_node.cpp)
 add_executable(kinect_handler src/kinect_handler.cpp)
 target_link_libraries(kinect_handler ${catkin_LIBRARIES})
+
+add_executable(kinect_robot_controller src/kinect_robot_controller.cpp)
+target_link_libraries(kinect_robot_controller ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
