@@ -4,6 +4,7 @@
 #include "geometry_msgs/Twist.h"
 
 void moveRobotForward();
+void moveRobotBackward();
 void turnRobotLeft();
 void turnRobotRight();
 void stopRobot();
@@ -12,15 +13,17 @@ ros::Publisher velPub;
 
 void handlerCallback(const std_msgs::Int32::ConstPtr& msg) {
     switch (msg->data) {
-        case KinectMovements::kBothArmsUp:
+        case KinectMovements::kBothArmsOpen:
             //ROS_INFO("                        BOTH ARMS UP!!");
             moveRobotForward();
             break;
-        case KinectMovements::kLeftArmUp:
+        case KinectMovements::kBothArmsUp:
+            moveRobotBackward();
+        case KinectMovements::kLeftArmOpen:
             //ROS_INFO("LEFT ARM UP!!");
             turnRobotLeft();
             break;
-        case KinectMovements::kRightArmUp:
+        case KinectMovements::kRightArmOpen:
             //ROS_INFO("                                                            RIGHT ARM UP!!");
             turnRobotRight();
             break;
@@ -74,6 +77,15 @@ void turnRobotRight() {
 void stopRobot() {
     geometry_msgs::Twist velCmd;
     velCmd.linear.x = 0.0;
+    velCmd.angular.z = 0.0;
+
+    //ROS_INFO("PARANDO!");
+    velPub.publish(velCmd);
+}
+
+void moveRobotBackward() {
+    geometry_msgs::Twist velCmd;
+    velCmd.linear.x = -0.1;
     velCmd.angular.z = 0.0;
 
     //ROS_INFO("PARANDO!");

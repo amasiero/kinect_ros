@@ -4,7 +4,9 @@
 
 bool isLeftArmUp(KinectTf * kTf);
 bool isRightArmUp(KinectTf * kTf);
-bool areBothArmsUp(KinectTf * kTf);
+bool areBothArmsUp(KinectTf *kTf);
+bool areBothArmsOpen(KinectTf *kTf);
+
 bool isLeftArmOpen(KinectTf *kTf);
 bool isRightArmOpen(KinectTf * kTf);
 bool isOnlyRightArmOpen(KinectTf * kTf);
@@ -25,16 +27,20 @@ int main(int argc, char **argv)
     {
         std_msgs::Int32 msg;
 
-        if (areBothArmsUp(&kTf)) {
+        if (areBothArmsOpen(&kTf)) {
+            msg.data = KinectMovements::kBothArmsOpen;
+            ROS_INFO("            BOTH OPEN");
+        }
+        else if (areBothArmsUp(&kTf)) {
             msg.data = KinectMovements::kBothArmsUp;
-            ROS_INFO("            BOTH");
+            ROS_INFO("            BOTH UP");
         }
         else if (isOnlyRightArmOpen(&kTf)) {
-            msg.data = KinectMovements::kRightArmUp;
+            msg.data = KinectMovements::kRightArmOpen;
             ROS_INFO("                               RIGHT");
         }
         else if (isOnlyLeftArmOpen(&kTf)) {
-            msg.data = KinectMovements::kLeftArmUp;
+            msg.data = KinectMovements::kLeftArmOpen;
             ROS_INFO("LEFT");
         }
         else {
@@ -49,10 +55,6 @@ int main(int argc, char **argv)
     }
     
     return 0;
-}
-
-bool areBothArmsUp(KinectTf *kTf) {
-    return isLeftArmUp(kTf) && isRightArmUp(kTf);
 }
 
 bool isLeftArmUp(KinectTf * kTf) {
@@ -148,4 +150,12 @@ bool isOnlyRightArmOpen(KinectTf * kTf) {
 
 bool isOnlyLeftArmOpen(KinectTf * kTf) {
     return isLeftArmOpen(kTf) && !isRightArmOpen(kTf);
+}
+
+bool areBothArmsOpen(KinectTf * kTf) {
+    return isRightArmOpen(kTf) && isLeftArmOpen(kTf);
+}
+
+bool areBothArmsUp(KinectTf * kTf) {
+    return isRightArmUp(kTf) && isLeftArmUp(kTf);
 }
