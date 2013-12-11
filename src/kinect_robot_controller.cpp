@@ -82,7 +82,7 @@ void stopRobot() {
 
 void moveRobotBackward() {
     geometry_msgs::Twist velCmd;
-    velCmd.linear.x = -0.1;
+    velCmd.linear.x = -0.05;
     velCmd.angular.z = 0.0;
 
     ROS_INFO("---------------------- TRAS");
