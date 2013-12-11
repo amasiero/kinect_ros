@@ -8,6 +8,8 @@ void turnRobotLeft();
 void turnRobotRight();
 void stopRobot();
 
+ros::Publisher velPub;
+
 void handlerCallback(const std_msgs::Int32::ConstPtr& msg) {
     switch (msg->data) {
         case KinectMovements::kBothArmsUp:
@@ -35,15 +37,14 @@ int main (int argc, char **argv) {
     ros::Rate loop_rate(10);
 
     ros::Subscriber kTfSub = node.subscribe<std_msgs::Int32>("kinect_handler", 1000, handlerCallback);
+    velPub = node.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
 
     ros::spin();
 
     return 0;
 }
 
-void moveRobotForward() {
-    ros::NodeHandle myNode;
-    ros::Publisher velPub = myNode.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
+void moveRobotForward() {    
     geometry_msgs::Twist velCmd;
     velCmd.linear.x = 0.1;
     velCmd.angular.z = 0.0;
@@ -53,8 +54,6 @@ void moveRobotForward() {
 }
 
 void turnRobotLeft() {
-    ros::NodeHandle myNode;
-    ros::Publisher velPub = myNode.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
     geometry_msgs::Twist velCmd;
     velCmd.linear.x = 0.0;
     velCmd.angular.z = -0.1;
@@ -64,8 +63,6 @@ void turnRobotLeft() {
 }
 
 void turnRobotRight() {
-    ros::NodeHandle myNode;
-    ros::Publisher velPub = myNode.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
     geometry_msgs::Twist velCmd;
     velCmd.linear.x = 0.0;
     velCmd.angular.z = 0.1;
@@ -75,8 +72,6 @@ void turnRobotRight() {
 }
 
 void stopRobot() {
-    ros::NodeHandle myNode;
-    ros::Publisher velPub = myNode.advertise<geometry_msgs::Twist>("/cmd_vel", 1);
     geometry_msgs::Twist velCmd;
     velCmd.linear.x = 0.0;
     velCmd.angular.z = 0.0;

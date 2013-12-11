@@ -66,11 +66,11 @@ bool isLeftArmUp(KinectTf * kTf) {
 
             float distanceBetweenHandAndElbow = left_hand->getOrigin().x() - left_elbow->getOrigin().x();
             //ROS_INFO("Distance hands elbow left %f", distanceBetweenHandAndElbow);
-            if (distanceBetweenHandAndElbow > 0.01 && distanceBetweenHandAndElbow < 0.06) {
+            if (distanceBetweenHandAndElbow > 0.01 && distanceBetweenHandAndElbow < 0.1) {
 
                 float distanceBetweenElbowAndShoulder = left_elbow->getOrigin().x() - left_shoulder->getOrigin().x();
                 //ROS_INFO("Distance elbow shoulder left %f", distanceBetweenElbowAndShoulder);
-                if (distanceBetweenElbowAndShoulder > 0.01 && distanceBetweenElbowAndShoulder < 0.07) {
+                if (distanceBetweenElbowAndShoulder > 0.01 && distanceBetweenElbowAndShoulder < 0.1) {
                     return true;
                 }
             }
@@ -90,11 +90,11 @@ bool isRightArmUp(KinectTf * kTf) {
 
             float distanceBetweenHandAndElbow = right_hand->getOrigin().x() - right_elbow->getOrigin().x();
             //ROS_INFO("Distance hands elbow right %f", distanceBetweenHandAndElbow);
-            if (distanceBetweenHandAndElbow > 0.01 && distanceBetweenHandAndElbow < 0.06) {
+            if (distanceBetweenHandAndElbow > 0.01 && distanceBetweenHandAndElbow < 0.1) {
 
                 float distanceBetweenElbowAndShoulder = right_elbow->getOrigin().x() - right_shoulder->getOrigin().x();
                 //ROS_INFO("Distance elbow shoulder right %f", distanceBetweenElbowAndShoulder);
-                if (distanceBetweenElbowAndShoulder > 0.01 && distanceBetweenElbowAndShoulder < 0.07) {
+                if (distanceBetweenElbowAndShoulder > 0.01 && distanceBetweenElbowAndShoulder < 0.1) {
                     return true;
                 }
             }
