@@ -5,6 +5,10 @@
 bool isLeftArmUp(KinectTf * kTf);
 bool isRightArmUp(KinectTf * kTf);
 bool areBothArmsUp(KinectTf * kTf);
+bool isLeftArmOpen(KinectTf *kTf);
+bool isRightArmOpen(KinectTf * kTf);
+bool isOnlyRightArmOpen(KinectTf * kTf);
+bool isOnlyLeftArmOpen(KinectTf * kTf);
 
 int main(int argc, char **argv)
 {
@@ -25,11 +29,11 @@ int main(int argc, char **argv)
             msg.data = KinectMovements::kBothArmsUp;
             ROS_INFO("BOTH ARMS UP");
         }
-        else if (isRightArmUp(&kTf)) {
+        else if (isOnlyRightArmOpen(&kTf)) {
             msg.data = KinectMovements::kRightArmUp;
             ROS_INFO("RIGHT ARM UP");
         }
-        else if (isLeftArmUp(&kTf)) {
+        else if (isOnlyLeftArmOpen(&kTf)) {
             msg.data = KinectMovements::kLeftArmUp;
             ROS_INFO("LEFT ARM UP");
         }
@@ -53,11 +57,8 @@ bool areBothArmsUp(KinectTf *kTf) {
 }
 
 bool isLeftArmUp(KinectTf * kTf) {
-    //ROS_INFO("Trying left hand");
     tf::StampedTransform * left_hand = kTf->left_hand();
-    //ROS_INFO("Trying left elbow");
     tf::StampedTransform * left_elbow = kTf->left_elbow();
-    //ROS_INFO("Trying left shoulder");
     tf::StampedTransform * left_shoulder = kTf->left_shoulder();
 
     if (left_hand && left_elbow && left_shoulder) {
@@ -65,11 +66,9 @@ bool isLeftArmUp(KinectTf * kTf) {
         if (left_hand->getOrigin().x() > left_elbow->getOrigin().x() && left_elbow->getOrigin().x() > left_shoulder->getOrigin().x()) {
 
             float distanceBetweenHandAndElbow = left_hand->getOrigin().x() - left_elbow->getOrigin().x();
-            //ROS_INFO("Distance between hand and elbow: %f", distanceBetweenHandAndElbow);
             if (distanceBetweenHandAndElbow > 0.01) {
 
                 float distanceBetweenElbowAndShoulder = left_elbow->getOrigin().x() - left_shoulder->getOrigin().x();
-                //ROS_INFO("Distance between elbow and shoulder: %f", distanceBetweenElbowAndShoulder);
                 if (distanceBetweenElbowAndShoulder > 0.01) {
                     return true;
                 }
@@ -80,11 +79,8 @@ bool isLeftArmUp(KinectTf * kTf) {
 }
 
 bool isRightArmUp(KinectTf * kTf) {
-    //ROS_INFO("Trying left hand");
     tf::StampedTransform * right_hand = kTf->right_hand();
-    //ROS_INFO("Trying left elbow");
     tf::StampedTransform * right_elbow = kTf->right_elbow();
-    //ROS_INFO("Trying left shoulder");
     tf::StampedTransform * right_shoulder = kTf->right_shoulder();
 
     if (right_hand && right_elbow && right_shoulder) {
@@ -92,11 +88,9 @@ bool isRightArmUp(KinectTf * kTf) {
         if (right_hand->getOrigin().x() > right_elbow->getOrigin().x() && right_elbow->getOrigin().x() > right_shoulder->getOrigin().x()) {
 
             float distanceBetweenHandAndElbow = right_hand->getOrigin().x() - right_elbow->getOrigin().x();
-            //ROS_INFO("Distance between hand and elbow: %f", distanceBetweenHandAndElbow);
             if (distanceBetweenHandAndElbow > 0.01) {
 
                 float distanceBetweenElbowAndShoulder = right_elbow->getOrigin().x() - right_shoulder->getOrigin().x();
-                //ROS_INFO("Distance between elbow and shoulder: %f", distanceBetweenElbowAndShoulder);
                 if (distanceBetweenElbowAndShoulder > 0.01) {
                     return true;
                 }
@@ -104,4 +98,51 @@ bool isRightArmUp(KinectTf * kTf) {
         }
     }
     return false;
+}
+
+bool isLeftArmOpen(KinectTf * kTf) {
+    tf::StampedTransform * left_hand = kTf->left_hand();
+    tf::StampedTransform * left_elbow = kTf->left_elbow();
+    tf::StampedTransform * left_shoulder = kTf->left_shoulder();
+
+    if (left_hand && left_elbow && left_shoulder) {
+        // x is y and vice versa
+        if (left_hand->getOrigin().y() < left_elbow->getOrigin().y() && left_elbow->getOrigin().y() < left_shoulder->getOrigin().y()) {
+
+            float distanceBetweenHandAndElbowOnX = left_hand->getOrigin().y() - left_elbow->getOrigin().y();
+            if (distanceBetweenHandAndElbowOnX > -0.35 && distanceBetweenHandAndElbowOnX < -0.25) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool isRightArmOpen(KinectTf * kTf) {
+    tf::StampedTransform * right_hand = kTf->right_hand();
+    tf::StampedTransform * right_elbow = kTf->right_elbow();
+    tf::StampedTransform * right_shoulder = kTf->right_shoulder();
+
+    if (right_hand && right_elbow && right_shoulder) {
+        // x is y and vice versa
+        if (right_hand->getOrigin().y() > right_elbow->getOrigin().y() && right_elbow->getOrigin().y() > right_shoulder->getOrigin().y()) {
+
+            float distanceBetweenHandAndElbowOnX = right_hand->getOrigin().y() - right_elbow->getOrigin().y();
+
+            if (distanceBetweenHandAndElbowOnX < 0.35 && distanceBetweenHandAndElbowOnX > 0.25) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool isOnlyRightArmOpen(KinectTf * kTf) {
+    return isRightArmOpen(kTf) && !isLeftArmOpen(kTf);
+}
+
+bool isOnlyLeftArmOpen(KinectTf * kTf) {
+    return isLeftArmOpen(kTf) && !isRightArmOpen(kTf);
 }
