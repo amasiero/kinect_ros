@@ -14,17 +14,15 @@ ros::Publisher velPub;
 void handlerCallback(const std_msgs::Int32::ConstPtr& msg) {
     switch (msg->data) {
         case KinectMovements::kBothArmsOpen:
-            //ROS_INFO("                        BOTH ARMS UP!!");
             moveRobotForward();
             break;
-        case KinectMovements::kBothArmsUp:
+        case KinectMovements::kBothArmsPushing:
             moveRobotBackward();
-        case KinectMovements::kLeftArmOpen:
-            //ROS_INFO("LEFT ARM UP!!");
+            break;
+        case KinectMovements::kOnlyLeftArmOpen:
             turnRobotLeft();
             break;
-        case KinectMovements::kRightArmOpen:
-            //ROS_INFO("                                                            RIGHT ARM UP!!");
+        case KinectMovements::kOnlyRightArmOpen:
             turnRobotRight();
             break;
         default:
@@ -52,7 +50,7 @@ void moveRobotForward() {
     velCmd.linear.x = 0.1;
     velCmd.angular.z = 0.0;
 
-    ROS_INFO("ANDANDO!");
+    ROS_INFO("FRENTE +++++++++++++++++++");
     velPub.publish(velCmd);
 }
 
@@ -61,7 +59,7 @@ void turnRobotLeft() {
     velCmd.linear.x = 0.0;
     velCmd.angular.z = -0.1;
 
-    ROS_INFO("VIRANDO A ESQUERDA!");
+    ROS_INFO("<<< ESQUERDA");
     velPub.publish(velCmd);
 }
 
@@ -70,7 +68,7 @@ void turnRobotRight() {
     velCmd.linear.x = 0.0;
     velCmd.angular.z = 0.1;
 
-    ROS_INFO("VIRANDO A DIREITA!");
+    ROS_INFO("DIREITA >>>");
     velPub.publish(velCmd);
 }
 
@@ -79,7 +77,6 @@ void stopRobot() {
     velCmd.linear.x = 0.0;
     velCmd.angular.z = 0.0;
 
-    //ROS_INFO("PARANDO!");
     velPub.publish(velCmd);
 }
 
@@ -88,6 +85,6 @@ void moveRobotBackward() {
     velCmd.linear.x = -0.1;
     velCmd.angular.z = 0.0;
 
-    //ROS_INFO("PARANDO!");
+    ROS_INFO("---------------------- TRAS");
     velPub.publish(velCmd);
 }

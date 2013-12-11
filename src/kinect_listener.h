@@ -95,9 +95,9 @@ bool KinectTf::set_transform(const std::string sourceFrame, tf::StampedTransform
                 return true;
             }
         }
-        else {
-            //ROS_INFO("Cannot transform from %s to %s using fixed frame %s", sourceFrame.c_str(), kTargetFrame.c_str(), kFixedFrame.c_str());
-        }
+        /*else {
+            ROS_INFO("Cannot transform from %s to %s using fixed frame %s", sourceFrame.c_str(), kTargetFrame.c_str(), kFixedFrame.c_str());
+        }*/
     }
     catch (tf::TransformException ex) {
         ROS_ERROR("%s", ex.what());

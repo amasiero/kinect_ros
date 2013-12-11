@@ -2,9 +2,9 @@
 #include "kinect_movements.h"
 #include <std_msgs/Int32.h>
 
-bool isLeftArmUp(KinectTf * kTf);
-bool isRightArmUp(KinectTf * kTf);
-bool areBothArmsUp(KinectTf *kTf);
+bool isLeftArmPushing(KinectTf * kTf);
+bool isRightArmPushing(KinectTf * kTf);
+bool areBothArmsPushing(KinectTf *kTf);
 bool areBothArmsOpen(KinectTf *kTf);
 
 bool isLeftArmOpen(KinectTf *kTf);
@@ -29,19 +29,15 @@ int main(int argc, char **argv)
 
         if (areBothArmsOpen(&kTf)) {
             msg.data = KinectMovements::kBothArmsOpen;
-            ROS_INFO("            BOTH OPEN");
         }
-        else if (areBothArmsUp(&kTf)) {
-            msg.data = KinectMovements::kBothArmsUp;
-            ROS_INFO("            BOTH UP");
+        else if (areBothArmsPushing(&kTf)) {
+            msg.data = KinectMovements::kBothArmsPushing;
         }
         else if (isOnlyRightArmOpen(&kTf)) {
-            msg.data = KinectMovements::kRightArmOpen;
-            ROS_INFO("                               RIGHT");
+            msg.data = KinectMovements::kOnlyRightArmOpen;
         }
         else if (isOnlyLeftArmOpen(&kTf)) {
-            msg.data = KinectMovements::kLeftArmOpen;
-            ROS_INFO("LEFT");
+            msg.data = KinectMovements::kOnlyLeftArmOpen;
         }
         else {
             msg.data = KinectMovements::kNotRecognized;
@@ -57,22 +53,21 @@ int main(int argc, char **argv)
     return 0;
 }
 
-bool isLeftArmUp(KinectTf * kTf) {
+bool isLeftArmPushing(KinectTf * kTf) {
     tf::StampedTransform * left_hand = kTf->left_hand();
     tf::StampedTransform * left_elbow = kTf->left_elbow();
     tf::StampedTransform * left_shoulder = kTf->left_shoulder();
 
     if (left_hand && left_elbow && left_shoulder) {
         // x is y
-        if (left_hand->getOrigin().x() > left_elbow->getOrigin().x()) {
 
-            float distanceBetweenHandAndElbow = left_hand->getOrigin().x() - left_elbow->getOrigin().x();
-            //ROS_INFO("Distance hands elbow left %f", distanceBetweenHandAndElbow);
-            if (distanceBetweenHandAndElbow > 0.01 && distanceBetweenHandAndElbow < 0.1) {
+        if (left_hand->getOrigin().z() > left_elbow->getOrigin().z()) {
 
-                float distanceBetweenElbowAndShoulder = left_elbow->getOrigin().x() - left_shoulder->getOrigin().x();
-                //ROS_INFO("Distance elbow shoulder left %f", distanceBetweenElbowAndShoulder);
-                if (distanceBetweenElbowAndShoulder > 0.01 && distanceBetweenElbowAndShoulder < 0.1) {
+            float distanceBetweenHandAndElbow = left_hand->getOrigin().z() - left_elbow->getOrigin().z();
+            if (distanceBetweenHandAndElbow > 0.1 && distanceBetweenHandAndElbow < 0.3) {
+
+                float distanceBetweenElbowAndShoulder = left_elbow->getOrigin().z() - left_shoulder->getOrigin().z();
+                if (distanceBetweenElbowAndShoulder > -0.1 && distanceBetweenElbowAndShoulder < 0.15) {
                     return true;
                 }
             }
@@ -81,22 +76,21 @@ bool isLeftArmUp(KinectTf * kTf) {
     return false;
 }
 
-bool isRightArmUp(KinectTf * kTf) {
+bool isRightArmPushing(KinectTf * kTf) {
     tf::StampedTransform * right_hand = kTf->right_hand();
     tf::StampedTransform * right_elbow = kTf->right_elbow();
     tf::StampedTransform * right_shoulder = kTf->right_shoulder();
 
     if (right_hand && right_elbow && right_shoulder) {
         // x is y
-        if (right_hand->getOrigin().x() > right_elbow->getOrigin().x()) {
 
-            float distanceBetweenHandAndElbow = right_hand->getOrigin().x() - right_elbow->getOrigin().x();
-            //ROS_INFO("Distance hands elbow right %f", distanceBetweenHandAndElbow);
-            if (distanceBetweenHandAndElbow > 0.01 && distanceBetweenHandAndElbow < 0.1) {
+        if (right_hand->getOrigin().z() > right_elbow->getOrigin().z()) {
 
-                float distanceBetweenElbowAndShoulder = right_elbow->getOrigin().x() - right_shoulder->getOrigin().x();
-                //ROS_INFO("Distance elbow shoulder right %f", distanceBetweenElbowAndShoulder);
-                if (distanceBetweenElbowAndShoulder > 0.01 && distanceBetweenElbowAndShoulder < 0.1) {
+            float distanceBetweenHandAndElbow = right_hand->getOrigin().z() - right_elbow->getOrigin().z();
+            if (distanceBetweenHandAndElbow > 0.1 && distanceBetweenHandAndElbow < 0.3) {
+
+                float distanceBetweenElbowAndShoulder = right_elbow->getOrigin().z() - right_shoulder->getOrigin().z();
+                if (distanceBetweenElbowAndShoulder > -0.1 && distanceBetweenElbowAndShoulder < 0.15) {
                     return true;
                 }
             }
@@ -156,6 +150,6 @@ bool areBothArmsOpen(KinectTf * kTf) {
     return isRightArmOpen(kTf) && isLeftArmOpen(kTf);
 }
 
-bool areBothArmsUp(KinectTf * kTf) {
-    return isRightArmUp(kTf) && isLeftArmUp(kTf);
+bool areBothArmsPushing(KinectTf * kTf) {
+    return isRightArmPushing(kTf) && isLeftArmPushing(kTf);
 }
